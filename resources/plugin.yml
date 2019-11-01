@@ -1,0 +1,4 @@
+name: DTM
+version: ${project.version}
+main: me.tr.dtm.main.Main
+api-version: 1.13
