@@ -1,0 +1,124 @@
+# --------------------------------------
+#        DESTROY THE MONUMENT (1.0)
+#
+#        Built by Niklas Haiminen
+#       for Smath Game Development
+#         http://smath.fi/games
+#
+#     Please follow the instructions and
+#      descriptions of every setting!
+#
+#    Our Discord: smath.fi/games/discord
+#        Wiki: smath.fi/games/dtm
+# --------------------------------------
+
+# --------------------------
+#     DATABASE SETTINGS
+# --------------------------
+
+# Set if the MySQL database option is enabled.
+# If not, the plugin will detect it automatically
+# and use the SQLite option instead.
+mysql:
+  enabled: false
+  address: localhost
+  port: 3306
+  username: root
+  password: 1234
+  database: Minecraft
+
+# --------------------------
+#      SERVER SETTINGS
+# --------------------------
+
+# For debugging/error fixing purposes
+# Logs plugin-events to the console
+logging: true
+
+# Global game settings
+games:
+  # The amount of games that can be run at the same time
+  max-running-games: 5
+  # The minimum amount of players that is needed to start the game
+  min-players-to-start: 6
+  # The maximum amount of players for a game
+  max-player-per-game: 30
+  # If this is true, player's can die as many times as necessary.
+  # If this is false players will go to spectating mode after death
+  # If spectating is disabled, player's will teleport to the spawn
+  unlimited-lives: true
+
+# Spawn settings
+# DO NOT MODIFY THESE SETTINGS, UNLESS YOU KNOW
+# WHAT YOU'RE DOING!
+# These settings DO NOT contain any documentation, as because
+# they're not meant to be modified!
+spawn:
+  teleport-on-join: true
+  location:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    yaw: '0.0'
+    pitch: '0.0'
+    world: world
+
+# --------------------------
+#       GAME SETTINGS
+# --------------------------
+
+# Settings for spectators
+spectating:
+  # Toggle if player's can spectate games
+  enabled: true
+  # If this is true, all commands are disabled, except
+  # the commands listed in 'enabled-commands' list.
+  disable-all-commands: true
+  enabled-commands:
+    - spawn
+    - hub
+    - join
+    - next
+
+# --------------------------
+#       SHOP SETTINGS
+#     (Coming soon...)
+# --------------------------
+
+#          ....
+
+# --------------------------
+#       CHAT SETTINGS
+# --------------------------
+
+# Settings for the prefix in-front of every sent message
+msg-prefix: "&a[DTM]"
+msg-prefix-enabled: true
+
+# The join and leave messages for the server as a whole and
+# for the individual games. These messages can be toggled
+connection-messages:
+  server-join:
+    enabled: true
+    message: "&7[&a+&7] The player &a{player} &7joined the server!"
+  server-quit:
+     enabled: true
+     message: "&7[&c-&7] The player &a{player} &7left the server!"
+  game-joined:
+    enabled: true
+    message: "&eThe player &a{player} &ejoined the game! ({current}/{max})"
+  game-quit:
+     enabled: true
+     message: "&eThe player &a{player} &equit the game! ({current}/{max})"
+
+
+# Every chat message in the game itself
+# Notice that these are exclusively the
+# chat-messages sent to the player.
+# Other notifications, join-messages, etc.
+# can be found under the 'Chat Settings'.
+# These messages cannot be switched off.
+messages:
+  test: "Test"
+
+
