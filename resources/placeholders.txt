@@ -1,0 +1,31 @@
+
+Player placeholders
+
+%player% - player's name
+%wins% - match wins of a player
+%losses% - match losses of a player
+%team% - current team of a player
+%ping% - player's ping
+%credits% - player's credits
+%gems% - player's gems
+%kills% - player's kills
+%deaths% - player's deaths
+%kd_ratio% - kill/death ratio of a player
+
+Game Placeholders
+
+%players_left_blue% - amount of players left on the blue team
+%players_left_red% - amount of players left on the red team
+%players_left% - total amount of players left in the game
+%games_running% - amount of games running at the moment
+%current_players% - current amount of players in the game
+%max_players% - max amount of players per game
+
+Server Placeholders
+
+%players_online% - Players online on the server
+%server_version% - Spigot version of the server (1.8.8, 1.14.4 etc.)
+%max_online% - max amount of players online
+%dtm_version% - the version of the Destroy The Monument game
+%average_tps% - the average TPS (ticks per second) of the server
+%date% - Today's date

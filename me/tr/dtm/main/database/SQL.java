@@ -1,5 +1,6 @@
 package me.tr.dtm.main.database;
 
+import me.tr.dtm.main.DTM;
 import me.tr.dtm.main.Main;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -19,7 +20,7 @@ public class SQL {
             if (!dataFolder.exists()) {
                 try {
                     if(!dataFolder.createNewFile()){
-                        System.out.println("Could not create Database file (#createNewFile())");
+                        DTM.log("Could not create SQLite Database file (#createNewFile())");
                     }
                 } catch (IOException e) {
                     System.out.println("Could not create Database file");
@@ -31,7 +32,7 @@ public class SQL {
             try {
                 Class.forName("org.sqlite.JDBC");
                 SQL.conn = DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
-                System.out.println("Opened database successfully");
+                DTM.log("Opened database successfully!");
 
                 queries();
             } catch (Exception e) {
@@ -48,7 +49,7 @@ public class SQL {
             try {
                 Class.forName("com.mysql.jdbc.Driver");
                 SQL.conn = DriverManager.getConnection("jdbc:mysql://" + address+ ":" + port + "/" + database, user, password);
-                System.out.println("Opened database successfully");
+                DTM.log("Opened database successfully");
 
                 queries();
             } catch (Exception e) {
@@ -62,18 +63,19 @@ public class SQL {
 
         String[] queries = new String[] {
 
-                "CREATE TABLE IF NOT EXISTS `dtm_maps` (`name` VARCHAR(32), `title` TEXT, `red_spawnpoint` TEXT, `blue_spawnpoint` TEXT, `monuments` LONGTEXT, PRIMARY KEY(`name`));"
+                "CREATE TABLE IF NOT EXISTS `dtm_maps` (`name` VARCHAR(32), `title` TEXT, `red_spawnpoint` TEXT, `blue_spawnpoint` TEXT, `red_monument` LONGTEXT, `blue_monument` LONGTEXT,  PRIMARY KEY(`name`));",
+                "CREATE TABLE IF NOT EXISTS `dtm_players` (`uuid` VARCHAR(64), `points` int(11), `kills` int(11), `deaths` int(11), `matches_won` int(11), `matches_lost` int(11), PRIMARY KEY(`uuid`));"
 
         };
 
         for(String query : queries) {
             try {
                 if(!update(query)) {
-                    System.out.println("Could not execute query (" + query + ")");
+                    DTM.log("Could not execute query (" + query + ")");
                 }
             } catch(SQLException ex){
                 ex.printStackTrace();
-                System.out.println("Could not setup the database");
+                DTM.log("Could not setup the database");
             }
         }
 
@@ -94,7 +96,7 @@ public class SQL {
             SQL.setup();
         }
         Statement s = getConnection().createStatement();
-        System.out.println("Executing database query '" + sql +  "'...");
+        DTM.log("Executing database query '" + sql + "'...");
         return s.executeQuery(sql);
     }
 
@@ -104,7 +106,7 @@ public class SQL {
             SQL.setup();
         }
         int result = getConnection().createStatement().executeUpdate(sql);
-        System.out.println("Executing database query '" + sql +  "'...");
+        DTM.log("Executing database query '" + sql +  "'...");
         return result > 0 ? true : false ;
     }
 

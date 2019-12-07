@@ -1,0 +1,6 @@
+- Two teams (BLUE/RED)
+- One Monument for each team, which the other team tries to destroy
+- Game ends when the other team's monument is destroyed and all the players are killed
+- Until the Monument is destroyed, players have unlimited lives.
+- Players receive points for wins and kills (Win: +10, Kill: +1)
+- During a game, players receive also gems, which are used as a currency at the game shop (/shop) (Kill: +3 gems)

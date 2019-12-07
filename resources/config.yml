@@ -27,6 +27,13 @@ mysql:
   password: 1234
   database: Minecraft
 
+# Settings for auto-saving data of players
+# Changing this requires server restart!
+auto-saving:
+  enabled: true
+  # How often should the server save the data (in seconds)
+  interval: 120
+
 # --------------------------
 #      SERVER SETTINGS
 # --------------------------
@@ -34,6 +41,13 @@ mysql:
 # For debugging/error fixing purposes
 # Logs plugin-events to the console
 logging: true
+
+# Notify server admins (players with OP)
+# if there's a new update available
+notify-updates: true
+
+# Select the date format that the server uses
+date-format: 'mm/dd/yyyy'
 
 # Global game settings
 games:
@@ -43,10 +57,6 @@ games:
   min-players-to-start: 6
   # The maximum amount of players for a game
   max-player-per-game: 30
-  # If this is true, player's can die as many times as necessary.
-  # If this is false players will go to spectating mode after death
-  # If spectating is disabled, player's will teleport to the spawn
-  unlimited-lives: true
 
 # Spawn settings
 # DO NOT MODIFY THESE SETTINGS, UNLESS YOU KNOW
@@ -62,6 +72,25 @@ spawn:
     yaw: '0.0'
     pitch: '0.0'
     world: world
+
+scoreboard:
+  enabled: true
+  title: "&a&lDTM §7- %dtm_version%"
+  scoreboard:
+    - ' &7Wins: &a%wins%'
+    - ' &7Losses: &a%losses%'
+    - ' &7Credits: &e%credits%'
+    - ' '
+    - ' &7K/D: &a%kd_ratio%'
+    - ' &7Ping: &e%ping%ms'
+    - ' '
+    - ' &asmath.fi/dtm'
+
+# Settings for server weather
+weather:
+  lock: true
+  # Values: RAINY or SUNNY
+  weather-lock: SUNNY
 
 # --------------------------
 #       GAME SETTINGS
@@ -87,6 +116,14 @@ spectating:
 
 #          ....
 
+
+# --------------------------
+#       GUI SETTINGS
+# --------------------------
+
+#         ...
+
+
 # --------------------------
 #       CHAT SETTINGS
 # --------------------------
@@ -100,16 +137,29 @@ msg-prefix-enabled: true
 connection-messages:
   server-join:
     enabled: true
-    message: "&7[&a+&7] The player &a{player} &7joined the server!"
+    message: "&7[&a+&7] The player &a%player% &7joined the server!"
   server-quit:
      enabled: true
-     message: "&7[&c-&7] The player &a{player} &7left the server!"
+     message: "&7[&c-&7] The player &a%player% &7left the server!"
   game-joined:
     enabled: true
-    message: "&eThe player &a{player} &ejoined the game! ({current}/{max})"
+    message: "&eThe player &a%player% &ejoined the game! (%current_players%/%max_players%)"
   game-quit:
      enabled: true
-     message: "&eThe player &a{player} &equit the game! ({current}/{max})"
+     message: "&eThe player &a%player% &equit the game! (%current_players%/%max_players%)"
+
+message-of-today:
+  enabled: true
+  motd:
+    - '&7&m--------------------'
+    - ' &a&lDestroyTheMonument &7(%dtm_version%)'
+    - ''
+    - ' &7Built by &a(c) Niklas Haiminen'
+    - ' &7Powered by &aSmath Ay'
+    - ' '
+    - ' &7Wiki: &ahttp://smath.fi/games/dtm'
+    - ' &7Discord: &ahttp://smath.fi/games/discord'
+    - '&7&m--------------------'
 
 
 # Every chat message in the game itself
@@ -119,6 +169,8 @@ connection-messages:
 # can be found under the 'Chat Settings'.
 # These messages cannot be switched off.
 messages:
-  test: "Test"
+  no-permission: "&cI'm sorry, but you do not have the permission to do this!"
+  data-saved: "&aSaved your data automatically!"
+  command-for-players: "&cThis command can only be used by players!"
 
 
