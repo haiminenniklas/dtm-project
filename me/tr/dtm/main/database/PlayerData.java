@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class PlayerData {
 
-    public static HashMap<UUID, HashMap<String, Object>> player_data = new HashMap<>();
+    static HashMap<UUID, HashMap<String, Object>> player_data = new HashMap<>();
 
     public static void loadNull(UUID uuid, boolean save) {
         HashMap<String, Object> empty = new HashMap<>();
@@ -42,10 +42,10 @@ public class PlayerData {
 
                 // User's Basic Data
 
-                data.put("points", result.getString("points"));
+                data.put("points", result.getInt("points"));
                 data.put("kills", result.getInt("kills"));
-                data.put("deaths", result.getString("deaths"));
-                data.put("matches_won", result.getString("matches_won"));
+                data.put("deaths", result.getInt("deaths"));
+                data.put("matches_won", result.getInt("matches_won"));
                 data.put("matches_lost", result.getInt("matches_lost"));
                 data.put("save", true);
 
@@ -76,7 +76,7 @@ public class PlayerData {
         return player_data.get(uuid);
     }
 
-    public static void savePlayer(UUID uuid) {
+    public static boolean savePlayer(UUID uuid) {
 
         OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
         if(!isLoaded(uuid)) {
@@ -85,12 +85,11 @@ public class PlayerData {
 
         HashMap<String, Object> data = player_data.get(uuid);
         if(!(boolean) data.get("save")) {
-            return;
+            return false;
         }
 
         String[] updateQueries = new String[] {
-                "UPDATE `players` SET `dtm_players` = '" + data.get("player_name")
-                        + "', `points` = " + data.get("points") + ", `kills` = " + data.get("kills") + ", `deaths` = " + data.get("deaths") + ", `matches_won` = " + data.get("matches_won") +
+                "UPDATE `dtm_players` SET `points` = " + data.get("points") + ", `kills` = " + data.get("kills") + ", `deaths` = " + data.get("deaths") + ", `matches_won` = " + data.get("matches_won") +
                         ", `matches_lost` = " + data.get("matches_lost") + " WHERE `uuid` = '" + uuid + "';",
         };
 
@@ -123,11 +122,15 @@ public class PlayerData {
 
             if(successful >= 1) {
                 DTM.log("Updated or Saved " + successful + "/" + updateQueries.length + " tables for " + uuid +  " (" + player.getName() + ")!");
+                return true;
             }
 
         } catch(SQLException ex) {
             ex.printStackTrace();
+            return false;
+
         }
+        return false;
 
     }
 
@@ -150,29 +153,30 @@ public class PlayerData {
 
     }
 
-    public static void set(UUID uuid, String key, Object value) {
+    public static boolean set(UUID uuid, String key, Object value) {
         if(!isLoaded(uuid)) {
             loadNull(uuid, false);
         }
 
         HashMap<String, Object> data = player_data.get(uuid);
         if(!data.containsKey(key)) {
-            return;
+            return false;
         }
 
         data.put(key, value);
         player_data.put(uuid, data);
+        return true;
 
     }
 
-    public static void add(UUID uuid, String key, int value) {
+    public static boolean add(UUID uuid, String key, int value) {
         if(!isLoaded(uuid)) {
             loadNull(uuid, false);
         }
 
         HashMap<String, Object> data = player_data.get(uuid);
         if(!data.containsKey(key)) {
-            return;
+            return false;
         }
 
         try {
@@ -180,9 +184,12 @@ public class PlayerData {
             int newVal = obj += value;
             data.put(key, newVal);
             player_data.put(uuid, data);
+            return true;
         } catch(NumberFormatException ex) {
             ex.printStackTrace();
         }
+
+        return false;
 
     }
 

@@ -4,6 +4,8 @@ import me.tr.dtm.main.Main;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -32,6 +34,14 @@ public class Util {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(pattern);
         LocalDateTime now = LocalDateTime.now();
         return dtf.format(now);
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(Double.toString(value));
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
 }

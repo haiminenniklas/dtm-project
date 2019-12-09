@@ -1,2 +1,2 @@
 dtm.admin - All permissions listed below
-
+dtm.chat.color - Allow player to use colors in chat (if setting's enabled)

@@ -11,9 +11,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.util.UUID;
 
 public class Events implements Listener {
 
@@ -54,6 +57,8 @@ public class Events implements Listener {
             }
         }
 
+        Messages.giveScoreboard(player);
+
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -77,6 +82,38 @@ public class Events implements Listener {
         DTM.async(() -> {
             PlayerData.savePlayer(player.getUniqueId());
         });
+
+    }
+
+    @EventHandler
+    public void onChat(AsyncPlayerChatEvent e) {
+
+        Player player = e.getPlayer();
+
+        if(DTM.getConfig().getBoolean("chat-format.enabled")) {
+
+            String message = e.getMessage();
+            String rawFormat = DTM.getConfig().getString("chat-format.format");
+
+            String format = Messages.playerPlaceholders(player, rawFormat);
+            format = Messages.serverPlaceholders(format);
+
+            if(DTM.getConfig().getBoolean("chat-format.colors.enabled")) {
+                if(DTM.getConfig().getBoolean("chat-format.colors.only-for-permission-holders")) {
+                    if(player.hasPermission("dtm.chat.color")) {
+                        message = ChatColor.translateAlternateColorCodes('&', e.getMessage());
+                    }
+                } else {
+                    message = ChatColor.translateAlternateColorCodes('&', e.getMessage());
+                }
+            }
+
+
+            format = format.replaceAll("%message%", message);
+            e.setFormat(format);
+
+        }
+
 
     }
 

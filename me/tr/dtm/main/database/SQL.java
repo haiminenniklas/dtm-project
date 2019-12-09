@@ -96,7 +96,8 @@ public class SQL {
             SQL.setup();
         }
         Statement s = getConnection().createStatement();
-        DTM.log("Executing database query '" + sql + "'...");
+        if(DTM.getConfig().getBoolean("log-queries"))
+            DTM.log("Executing database query '" + sql + "'...");
         return s.executeQuery(sql);
     }
 
@@ -106,7 +107,8 @@ public class SQL {
             SQL.setup();
         }
         int result = getConnection().createStatement().executeUpdate(sql);
-        DTM.log("Executing database query '" + sql +  "'...");
+        if(DTM.getConfig().getBoolean("log-queries"))
+            DTM.log("Executing database query '" + sql +  "'...");
         return result > 0 ? true : false ;
     }
 

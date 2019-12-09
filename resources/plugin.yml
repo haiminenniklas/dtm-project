@@ -3,6 +3,7 @@ version: 0.1-beta
 main: me.tr.dtm.main.Main
 api-version: 1.13
 website: http://smath.fi/games/
+soft-depend: [Vault]
 
 commands:
   dtm:

@@ -2,6 +2,8 @@ package me.tr.dtm.main;
 
 import com.sun.scenario.Settings;
 import me.tr.dtm.main.database.PlayerData;
+import me.tr.dtm.main.other.callback.Callback;
+import me.tr.dtm.main.other.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -10,6 +12,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class DTM {
@@ -70,15 +73,15 @@ public class DTM {
     }
 
     public static void afterAsync(int seconds, Runnable task) {
-        Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), task, (long) getAverageTPS() * seconds);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), task, (long) 20 * seconds);
     }
 
     public static void every(int seconds, Runnable task) {
-        Bukkit.getScheduler().runTaskTimer(Main.getInstance(), task, 20, (long) getAverageTPS() * seconds);
+        Bukkit.getScheduler().runTaskTimer(Main.getInstance(), task, 20, (long) 20 * seconds);
     }
 
     public static void everyAsync(int seconds, Runnable task) {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), task, 20, (long) getAverageTPS() * seconds);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), task, 20, (long) 20 * seconds);
     }
 
     public static double getAverageTPS() {
@@ -93,10 +96,10 @@ public class DTM {
             ex.printStackTrace();
             return 0.0d;
         }
-        return average;
+        return Util.round(average, 2);
     }
 
-    public static String getServerVersion ( ) {
+    private static String getServerVersion ( ) {
         return Bukkit.getServer().getClass().getPackage().getName().substring(23);
     }
 
@@ -138,9 +141,24 @@ public class DTM {
     }
 
     public static void loadPlayer(Player player) {
-        DTM.async(() -> PlayerData.savePlayer(player.getUniqueId()));
+        DTM.async(() -> PlayerData.loadPlayer(player.getUniqueId()));
     }
 
+    public static void loadPlayer(Player player, Callback cb) {
+
+        DTM.async(() -> {
+            PlayerData.loadPlayer(player.getUniqueId());
+            cb.execute();
+        });
+    }
+
+    public static void savePlayer(Player player, Callback cb) {
+
+        DTM.async(() -> {
+            PlayerData.savePlayer(player.getUniqueId());
+            cb.execute();
+        });
+    }
 
     public static Server getServer() {
         return Bukkit.getServer();
@@ -150,6 +168,58 @@ public class DTM {
         return Main.getInstance();
     }
 
+    public static boolean usesVault() {
+        return Main.usesVault();
+    }
+
+    public static int getKills(UUID uuid) {
+        if(!PlayerData.isLoaded(uuid)) {
+            PlayerData.loadNull(uuid, false);
+        }
+       return (int) PlayerData.getValue(uuid, "kills");
+    }
+
+    public static int getDeaths(UUID uuid) {
+        if(!PlayerData.isLoaded(uuid)) {
+            PlayerData.loadNull(uuid, false);
+        }
+        return (int) PlayerData.getValue(uuid, "deaths");
+    }
+
+    public static int getPoints(UUID uuid) {
+        if(!PlayerData.isLoaded(uuid)) {
+            PlayerData.loadNull(uuid, false);
+        }
+        return (int) PlayerData.getValue(uuid, "points");
+    }
+
+    public static int getWonMatches(UUID uuid) {
+        if(!PlayerData.isLoaded(uuid)) {
+            PlayerData.loadNull(uuid, false);
+        }
+        return (int) PlayerData.getValue(uuid, "matches_won");
+    }
+
+    public static int getLostMatches(UUID uuid) {
+        if(!PlayerData.isLoaded(uuid)) {
+            PlayerData.loadNull(uuid, false);
+        }
+        return (int) PlayerData.getValue(uuid, "matches_lost");
+    }
+
+    public static double getKDRatio(UUID uuid) {
+        if(!PlayerData.isLoaded(uuid)) {
+            PlayerData.loadNull(uuid, false);
+        }
+
+        if(getDeaths(uuid) < 1) return getKills(uuid);
+        if(getKills(uuid) < 1) return 0.0;
+
+        double kd = ((double) getKills(uuid) /(double)  getDeaths(uuid));
+
+        return Util.round(kd, 2);
+
+    }
 
 
 }

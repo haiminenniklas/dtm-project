@@ -27,12 +27,15 @@ mysql:
   password: 1234
   database: Minecraft
 
+# Log the sent SQL queries to the console (for debugging mainly)
+log-queries: false
+
 # Settings for auto-saving data of players
 # Changing this requires server restart!
 auto-saving:
   enabled: true
   # How often should the server save the data (in seconds)
-  interval: 120
+  interval: 300
 
 # --------------------------
 #      SERVER SETTINGS
@@ -51,18 +54,16 @@ date-format: 'mm/dd/yyyy'
 
 # Global game settings
 games:
-  # The amount of games that can be run at the same time
-  max-running-games: 5
   # The minimum amount of players that is needed to start the game
-  min-players-to-start: 6
-  # The maximum amount of players for a game
-  max-player-per-game: 30
+  min-players-to-start: 2
 
 # Spawn settings
 # DO NOT MODIFY THESE SETTINGS, UNLESS YOU KNOW
 # WHAT YOU'RE DOING!
 # These settings DO NOT contain any documentation, as because
 # they're not meant to be modified!
+# NOTICE! The spawn works as the 'lobby', as you teleport to spawn to
+# wait for the next game for example
 spawn:
   teleport-on-join: true
   location:
@@ -73,13 +74,15 @@ spawn:
     pitch: '0.0'
     world: world
 
+
+# Settings for the server's scoreboard
 scoreboard:
   enabled: true
   title: "&a&lDTM §7- %dtm_version%"
   scoreboard:
     - ' &7Wins: &a%wins%'
     - ' &7Losses: &a%losses%'
-    - ' &7Credits: &e%credits%'
+    - ' &7Credits: &e%points%'
     - ' '
     - ' &7K/D: &a%kd_ratio%'
     - ' &7Ping: &e%ping%ms'
@@ -148,6 +151,38 @@ connection-messages:
      enabled: true
      message: "&eThe player &a%player% &equit the game! (%current_players%/%max_players%)"
 
+# The chat-format created by DTM
+# For info about the placeholders, see our wiki!
+chat-format:
+  # Whether you want to use this plugin's chat-format
+  enabled: true
+  # The actual formatting for chat messages
+  # For placeholder info, see the wiki
+  format: '&8[&b%points%&8] &7%player%&f: %message%'
+  # Enable players to use chat color in chat (&e, &a, &c, etc.)
+  colors:
+    # Whether you want to enable this setting or not
+    enabled: true
+    # Enable this, if you only want players with permission to use colors
+    # (the permission is dtm.chat.color)
+    only-for-permission-holders: true
+
+# Settings for chat messages
+chat:
+  # Whether the chat is enabled or not
+  enabled: true
+  # Settings for delaying the chat
+  delay:
+    # Whether this setting is enabled or not
+    enabled: true
+    # The actual delay between messages (in seconds)
+    delay: 3
+  # Whether you want to disable chat during a game
+  disable-chat-in-game: false
+  # Whether you want to disable chat whilst waiting the game to start (in lobby)
+  disable-chat-in-lobby: false
+
+# The message sent to player as they join
 message-of-today:
   enabled: true
   motd:
@@ -172,5 +207,6 @@ messages:
   no-permission: "&cI'm sorry, but you do not have the permission to do this!"
   data-saved: "&aSaved your data automatically!"
   command-for-players: "&cThis command can only be used by players!"
+  feature-not-available: '&eThis feature is not yet available'
 
 

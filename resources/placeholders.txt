@@ -6,11 +6,15 @@ Player placeholders
 %losses% - match losses of a player
 %team% - current team of a player
 %ping% - player's ping
-%credits% - player's credits
+%points% - player's credits
 %gems% - player's gems
 %kills% - player's kills
 %deaths% - player's deaths
 %kd_ratio% - kill/death ratio of a player
+
+%prefix% - player's prefix (requires Vault)
+%suffix% - player's suffix (requires Vault)
+%primary_group% - player's primary group (requires Vault)
 
 Game Placeholders
 
@@ -29,3 +33,7 @@ Server Placeholders
 %dtm_version% - the version of the Destroy The Monument game
 %average_tps% - the average TPS (ticks per second) of the server
 %date% - Today's date
+
+Chat Placeholders
+
+%message% - the message sent to chat
