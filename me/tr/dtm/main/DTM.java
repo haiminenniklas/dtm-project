@@ -132,6 +132,18 @@ public class DTM {
         return new Location(world, x, y, z, yaw, pitch);
 
     }
+
+    public static void teleportToSpawn(Player player) {
+
+        Util.heal(player);
+        Util.removePotionEffects(player);
+        Util.clearInventory(player);
+
+        player.teleport(getSpawn());
+        Messages.send(player, "teleport-to-spawn");
+
+    }
+
     public static FileConfiguration getConfig() {
         return Main.getInstance().getConfig();
     }

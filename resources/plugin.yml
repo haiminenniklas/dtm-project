@@ -9,3 +9,12 @@ commands:
   dtm:
     description: Destroy The Monument
     aliases: [destroythemonument]
+  join:
+    description: Join to the game
+    aliases: [play]
+  spec:
+    description: Spectate the game
+    aliases: [spectate, watch]
+  leave:
+    description: Leave the game
+    aliases: [quit, spawn]

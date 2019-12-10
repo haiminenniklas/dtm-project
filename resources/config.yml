@@ -28,7 +28,7 @@ mysql:
   database: Minecraft
 
 # Log the sent SQL queries to the console (for debugging mainly)
-log-queries: false
+log-queries: true
 
 # Settings for auto-saving data of players
 # Changing this requires server restart!
@@ -146,10 +146,10 @@ connection-messages:
      message: "&7[&c-&7] The player &a%player% &7left the server!"
   game-joined:
     enabled: true
-    message: "&eThe player &a%player% &ejoined the game! (%current_players%/%max_players%)"
+    message: "&eThe player &a%player% &ejoined the game!"
   game-quit:
      enabled: true
-     message: "&eThe player &a%player% &equit the game! (%current_players%/%max_players%)"
+     message: "&eThe player &a%player% &equit the game!"
 
 # The chat-format created by DTM
 # For info about the placeholders, see our wiki!
@@ -205,8 +205,12 @@ message-of-today:
 # These messages cannot be switched off.
 messages:
   no-permission: "&cI'm sorry, but you do not have the permission to do this!"
-  data-saved: "&aSaved your data automatically!"
+  data-saved: "&eSaved your data automatically!"
   command-for-players: "&cThis command can only be used by players!"
-  feature-not-available: '&eThis feature is not yet available'
+  feature-not-available: '&eThis feature is not available'
+  game-running-error: '&cYou cannot join the game because it is already running! You can spectate the game with &e/spec&c!'
+  teleport-to-spawn: '&eTeleporting you to spawn...'
+
+
 
 

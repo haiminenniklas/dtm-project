@@ -59,6 +59,10 @@ public class Events implements Listener {
 
         Messages.giveScoreboard(player);
 
+        if(config.getBoolean("spawn.teleport-on-join")) {
+            player.teleport(DTM.getSpawn());
+        }
+
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -108,9 +112,8 @@ public class Events implements Listener {
                 }
             }
 
-
             format = format.replaceAll("%message%", message);
-            e.setFormat(format);
+            e.setFormat(ChatColor.translateAlternateColorCodes('&', format));
 
         }
 

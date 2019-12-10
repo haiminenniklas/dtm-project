@@ -1,13 +1,20 @@
 package me.tr.dtm.main;
 
+import me.tr.dtm.main.commands.GameCommands;
 import me.tr.dtm.main.database.PlayerData;
 import me.tr.dtm.main.database.SQL;
+import me.tr.dtm.main.game.Game;
+import me.tr.dtm.main.game.Map;
+import me.tr.dtm.main.game.Team;
+import me.tr.dtm.main.game.object.Monument;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.WeatherType;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -16,6 +23,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 public class Main extends JavaPlugin {
@@ -71,8 +79,12 @@ public class Main extends JavaPlugin {
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new Events(), this);
+        pm.registerEvents(new Game(), this);
 
         getCommand("dtm").setExecutor(this);
+        getCommand("join").setExecutor(new GameCommands());
+        getCommand("spec").setExecutor(new GameCommands());
+        getCommand("leave").setExecutor(new GameCommands());
 
         if(!setupPermissions()) {
             DTM.warn("§eAs because Vault wasn't found, this plugin's features are limited");
@@ -82,7 +94,14 @@ public class Main extends JavaPlugin {
             setupChat();
         }
 
+        Map.loadMaps((maps) -> {
+            if(maps.size() < 1) {
+                DTM.warn("No maps found, maybe you should add some?");
+            } else {
 
+                DTM.log("Loaded " + maps.size() + " maps from the Database!");
+            }
+        });
 
         long end = System.currentTimeMillis();
         System.out.println(" ");
@@ -291,13 +310,189 @@ public class Main extends JavaPlugin {
                     sender.sendMessage("§7§m------------------------");
                     sender.sendMessage(" §e/dtm maps §7...");
                     sender.sendMessage(" ");
-                    sender.sendMessage(" §ashow §7Show all the maps");
-                    sender.sendMessage(" §acreate <name> §7Create new map");
-                    sender.sendMessage(" §asetMonument <RED|BLUE> <mapName> §7Set the monument block to the block you're looking at");
-                    sender.sendMessage(" §asetSpawn <RED|BLUE> <mapName> §7Set the spawnpoint of a team to your location");
-                    sender.sendMessage(" §asave <mapName> §7save a map!");
+                    sender.sendMessage(" §a...show §7Show all the maps");
+                    sender.sendMessage(" §a...create <name> §7Create new map");
+                    sender.sendMessage(" §a...setMonument <RED|BLUE> <mapName> §7Set the monument block to the block you're looking at");
+                    sender.sendMessage(" §a...setSpawn <RED|BLUE> <mapName> §7Set the spawnpoint of a team to your location");
+                    sender.sendMessage(" §a...save <mapName> §7save a map!");
+                    sender.sendMessage(" §a...delete <mapName> §7delete a map");
                     sender.sendMessage("§7§m------------------------");
                     return true;
+                }
+
+                if(args[1].equalsIgnoreCase("show")) {
+
+                    sender.sendMessage("§7§m------------------------");
+                    sender.sendMessage(" §7List of DTM maps (§a" + Map.getLoadedMaps().size() + "§7):");
+                    for(java.util.Map.Entry<String, Map> e : Map.getLoadedMaps().entrySet()) {
+                        sender.sendMessage(" §7- §e" + e.getKey() + " (World: " + e.getValue().getWorld().getName() + ")");
+                    }
+                    sender.sendMessage("§7§m------------------------");
+
+                }
+
+                if(args.length == 3) {
+
+                    String mapName = args[2];
+
+                    if(args[1].equalsIgnoreCase("create")) {
+
+                        if(sender instanceof Player) {
+
+                            Player player = (Player) sender;
+
+                            if(Map.getLoadedMaps().containsKey(mapName)) {
+                                sender.sendMessage("§a[DTM] §cThat map already exists! Try a different name!");
+                                return true;
+                            }
+
+                            Map map = new Map(player.getWorld(), new HashMap<>(), new HashMap<>());
+                            map.setAsSetupped(false);
+                            sender.sendMessage("§a[DTM] §eCreated the map §a" + mapName + " §e!");
+                            sender.sendMessage("§a[DTM] §eNow you just need to set the Monument and Spawn locations! For help, check §a/dtm map§e!");
+                            Map.getLoadedMaps().put(mapName, map);
+
+
+                        } else {
+                            Messages.send(sender, "command-for-players");
+                        }
+
+                    } else if(args[1].equalsIgnoreCase("save")) {
+
+                        Map map = Map.getLoadedMaps().get(mapName);
+
+                        if(map == null) {
+                            sender.sendMessage("§a[DTM] §cNo map was found by the name '" + mapName + "'...");
+                            return true;
+                        }
+
+                        if(!map.canPublish()) {
+                            sender.sendMessage("§a[DTM] §cYou need to fully setup the map if you want to save it!");
+                            return true;
+                        }
+
+                        sender.sendMessage("§a[DTM] §eSaving map §a" + mapName + "§e...");
+                        Map.saveMap(mapName, map, (success) -> {
+                            if(success) {
+                                sender.sendMessage("§a[DTM] §eSuccessfully saved the map §e" + mapName + "§e!");
+                            } else {
+                                sender.sendMessage("§a[DTM] §cCould not save the map §e" + mapName + "§c...");
+                            }
+                        });
+
+                    } else if(args[1].equalsIgnoreCase("delete") || args[1].equalsIgnoreCase("remove")) {
+
+
+                        Map map = Map.getLoadedMaps().get(mapName);
+
+                        if(map == null) {
+                            sender.sendMessage("§a[DTM] §cNo map was found by the name '" + mapName + "'...");
+                            return true;
+                        }
+
+                        sender.sendMessage("§a[DTM] §eSaving map §a" + mapName + "§e...");
+                        Map.deleteMap(mapName, (success) -> {
+                            if(success) {
+                                sender.sendMessage("§a[DTM] §eSuccessfully deleted the map §e" + mapName + "§e!");
+                            } else {
+                                sender.sendMessage("§a[DTM] §cCould not delete the map §e" + mapName + "§c...");
+                            }
+                        });
+                    }
+
+                } else if(args.length >= 4) {
+
+                    if(sender instanceof Player) {
+
+                        Player player = (Player) sender;
+
+                        String teamStr = args[2].toUpperCase();
+
+                        if(!teamStr.equalsIgnoreCase("red") && !teamStr.equalsIgnoreCase("blue")) {
+                            sender.sendMessage("§a[DTM] §cThe only available teams are RED or BLUE!");
+                            return true;
+                        }
+
+                        Team team = Team.valueOf(teamStr);
+                        String mapName = args[3];
+                        Map map = Map.getLoadedMaps().get(mapName);
+
+                        if(map == null) {
+                            sender.sendMessage("§a[DTM] §cNo map was found by the name '" + mapName + "'...");
+                            return true;
+                        }
+
+                        if(args[1].equalsIgnoreCase("setSpawn")) {
+
+                            Location loc = player.getLocation();
+                            if(!map.getSpawnpoints().containsKey(team)){
+                                map.getSpawnpoints().put(team, loc);
+                            } else {
+                                map.getSpawnpoints().replace(team, loc);
+                            }
+                            sender.sendMessage("§a[DTM] §eSet the spawnpoint for team " + team.name() + " at your location! Now just save your changes with §a/dtm map save " + mapName + "§e!");
+
+                        } else if(args[1].equalsIgnoreCase("setMonument")) {
+
+                            Block block = player.getTargetBlockExact(15);
+                            if(block == null) {
+                                sender.sendMessage("§a[DTM] §cNo block in sight...");
+                                return true;
+                            }
+
+                            Location loc = block.getLocation();
+                            Monument mon = new Monument(team, loc);
+                            if(!map.getMonuments().containsKey(team)) {
+                                map.getMonuments().put(team, mon);
+                            } else {
+                                map.getMonuments().replace(team, mon);
+                            }
+
+                            sender.sendMessage("§a[DTM] §eSet the monument for team " + team.name() + " at (X: " + loc.getBlockX() + "Y: " + loc.getY() + " Z: " + loc.getZ() +")! Now just save your changes with §a/dtm map save " + mapName + "§e!");
+
+                        }
+
+                        if(map.canPublish()) {
+                            map.setAsSetupped(true);
+                        }
+
+
+                    } else {
+                        Messages.send(sender, "command-for-players");
+                    }
+
+
+
+                }
+
+                else {
+                    String mapName = args[1];
+
+                    Map map = Map.getLoadedMaps().get(mapName);
+                    if(map == null) {
+                        sender.sendMessage("§a[DTM] §cNo map was found by the name '" + mapName + "'...");
+                        return true;
+                    }
+
+                    Location blueSpawn = map.getSpawnpoints().get(Team.BLUE);
+                    Location redSpawn = map.getSpawnpoints().get(Team.RED);
+
+                    Location blueMon = map.getMonuments().get(Team.BLUE).getLocation();
+                    Location redMon = map.getMonuments().get(Team.RED).getLocation();
+
+                    sender.sendMessage("§7§m------------------------");
+                    sender.sendMessage(" §7Map §e" + mapName + "§7:");
+                    sender.sendMessage(" ");
+                    sender.sendMessage(" §7World: §e" + map.getWorld().getName());
+                    sender.sendMessage(" §7Spawnpoints: ");
+                    sender.sendMessage("   §9BLUE§7: " + blueSpawn.getX() + ", " + blueSpawn.getY() + ", " + blueSpawn.getZ());
+                    sender.sendMessage("   §cRED§7: " + redSpawn.getX() + ", " + redSpawn.getY() + ", " + redSpawn.getZ());
+                    sender.sendMessage(" §7Monuments: ");
+                    sender.sendMessage("   §9BLUE§7: " + blueMon.getX() + ", " + blueMon.getY() + ", " + blueMon.getZ());
+                    sender.sendMessage("   §cRED§7: " + redMon.getX() + ", " + redMon.getY() + ", " + redMon.getZ());
+                    sender.sendMessage("§7§m------------------------");
+
+
                 }
 
             }

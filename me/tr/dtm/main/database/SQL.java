@@ -63,7 +63,7 @@ public class SQL {
 
         String[] queries = new String[] {
 
-                "CREATE TABLE IF NOT EXISTS `dtm_maps` (`name` VARCHAR(32), `title` TEXT, `red_spawnpoint` TEXT, `blue_spawnpoint` TEXT, `red_monument` LONGTEXT, `blue_monument` LONGTEXT,  PRIMARY KEY(`name`));",
+                "CREATE TABLE IF NOT EXISTS `dtm_maps` (`name` VARCHAR(32), `red_spawnpoint` TEXT, `blue_spawnpoint` TEXT, `red_monument` LONGTEXT, `blue_monument` LONGTEXT, `world` TEXT,  PRIMARY KEY(`name`));",
                 "CREATE TABLE IF NOT EXISTS `dtm_players` (`uuid` VARCHAR(64), `points` int(11), `kills` int(11), `deaths` int(11), `matches_won` int(11), `matches_lost` int(11), PRIMARY KEY(`uuid`));"
 
         };

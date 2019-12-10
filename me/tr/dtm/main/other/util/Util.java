@@ -1,7 +1,11 @@
 package me.tr.dtm.main.other.util;
 
 import me.tr.dtm.main.Main;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -43,5 +47,54 @@ public class Util {
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
     }
+
+    public static String locationToText(Location loc) {
+
+        double x = loc.getX();
+        double y = loc.getY();
+        double z = loc.getZ();
+
+        float yaw = loc.getYaw();
+        float pitch = loc.getPitch();
+
+        World world = loc.getWorld();
+
+        return world.getName() + ";" + x + ";" + y + ";" + z + ";" + yaw + ";" + pitch;
+
+    }
+
+    public static Location textToLocation(String text) {
+
+        String[] values = text.split(";");
+
+        double x = Double.parseDouble(values[1]);
+        double y = Double.parseDouble(values[2]);
+        double z = Double.parseDouble(values[3]);
+
+        float yaw = Float.parseFloat(values[4]);
+        float pitch = Float.parseFloat(values[5]);
+
+        World world = Bukkit.getWorld(values[0]);
+
+        return new Location(world, x, y, z, yaw, pitch);
+
+    }
+
+    public static void heal(Player player) {
+        player.setHealth(20.0);
+        player.setFoodLevel(20);
+        removePotionEffects(player);
+    }
+    public static void clearInventory(Player player) {
+        player.getInventory().clear();
+        player.getInventory().setArmorContents(null);
+        player.updateInventory();
+    }
+
+    public static void removePotionEffects(Player player) {
+        for (PotionEffect effect : player.getActivePotionEffects())
+            player.removePotionEffect(effect.getType());
+    }
+
 
 }
