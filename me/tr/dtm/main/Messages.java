@@ -52,6 +52,97 @@ public class Messages {
 
     }
 
+    public static void multipleLines(Player player, String path) {
+
+        List<String> lines = DTM.getConfig().getStringList(path);
+
+        if(lines.size() < 1){
+            throw new IllegalArgumentException("Message list cannot be empty!");
+        }
+
+        for(String s : lines) {
+            s = serverPlaceholders(s);
+            s = playerPlaceholders(player, s);
+            s = ChatColor.translateAlternateColorCodes('&', s);
+            player.sendMessage(s);
+        }
+
+    }
+
+    public static void sendOther(Player player, String path) {
+
+        String msg = DTM.getConfig().getString(path);
+
+        if(msg == null) {
+            throw new NullPointerException("Could not find message with path '" + path + "'");
+        }
+
+        msg = serverPlaceholders(msg);
+        msg = playerPlaceholders(player, msg);
+        msg = ChatColor.translateAlternateColorCodes('&', msg);
+
+        player.sendMessage(msg);
+
+    }
+
+    public static String parse(Player player, String msg_name) {
+        String message = Main.getInstance().getConfig().getString("messages." + msg_name);
+
+        if(message == null) {
+            throw new NullPointerException("Could not find message with identifier '" + msg_name + "'");
+        }
+
+        message = serverPlaceholders(message);
+        message = playerPlaceholders(player, message);
+        message = ChatColor.translateAlternateColorCodes('&', message);
+
+        return message;
+
+    }
+
+    public static String parse(String msg_name) {
+        String message = Main.getInstance().getConfig().getString("messages." + msg_name);
+
+        if(message == null) {
+            throw new NullPointerException("Could not find message with identifier '" + msg_name + "'");
+        }
+
+        message = serverPlaceholders(message);
+        message = ChatColor.translateAlternateColorCodes('&', message);
+
+        return message;
+
+    }
+
+    public static String parseOther(Player player, String path) {
+        String message = Main.getInstance().getConfig().getString(path);
+
+        if(message == null) {
+            throw new NullPointerException("Could not find message with identifier '" + path + "'");
+        }
+
+        message = serverPlaceholders(message);
+        message = playerPlaceholders(player, message);
+        message = ChatColor.translateAlternateColorCodes('&', message);
+
+        return message;
+    }
+
+    public static String parseOther(String path) {
+
+        String message = Main.getInstance().getConfig().getString(path);
+
+        if(message == null) {
+            throw new NullPointerException("Could not find message with identifier '" + path + "'");
+        }
+
+        message = serverPlaceholders(message);
+        message = ChatColor.translateAlternateColorCodes('&', message);
+
+        return message;
+
+    }
+
     public static String serverPlaceholders(String message) {
         message = message.replaceAll("%players_online%", String.valueOf(Bukkit.getOnlinePlayers().size()));
         message = message.replaceAll("%server_version%", Bukkit.getVersion());

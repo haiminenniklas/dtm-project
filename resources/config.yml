@@ -112,6 +112,30 @@ spectating:
     - join
     - next
 
+# Message sent to a player when it joins a game,
+# telling the goal of the game.
+game-description-message:
+  enabled: true
+  message:
+    - '&7&m--------------------'
+    - ' &a&lDestroyTheMonument &7(%dtm_version%)'
+    - ''
+    - ' &a&lGoal: '
+    - ' &7There is &a2 teams &7and each one'
+    - ' &7has &a1 monument&7! Each team tries'
+    - ' &7to destroy the other''s monument and'
+    - ' &7after it''s destroyed kill the other'
+    - ' &ateam''s players&7! After the monument is'
+    - ' &7gone, you cannot respawn!'
+    - ''
+    - '&7&m--------------------'
+
+game-countdown:
+  start-message: '&e&lGame countdown started!'
+  message: '&eGame starting in &a%seconds_left%&e...'
+  countdown-stopped: '&aStopped game countdown!'
+
+
 # --------------------------
 #       SHOP SETTINGS
 #     (Coming soon...)
@@ -210,7 +234,6 @@ messages:
   feature-not-available: '&eThis feature is not available'
   game-running-error: '&cYou cannot join the game because it is already running! You can spectate the game with &e/spec&c!'
   teleport-to-spawn: '&eTeleporting you to spawn...'
-
 
 
 

@@ -37,3 +37,5 @@ Server Placeholders
 Chat Placeholders
 
 %message% - the message sent to chat
+
+

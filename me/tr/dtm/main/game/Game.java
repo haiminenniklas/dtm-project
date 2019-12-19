@@ -5,7 +5,10 @@ import me.tr.dtm.main.Messages;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +22,7 @@ public class Game implements Listener {
 
     private static boolean running = false;
     private static boolean paused = false;
+    private static boolean countingDown = false;
 
     private static List<Block> placedBlocks = new ArrayList<>();
 
@@ -35,10 +39,18 @@ public class Game implements Listener {
 
         player.setGameMode(GameMode.SPECTATOR);
 
-        if(players.size() >= DTM.getConfig().getInt("games.min-players-to-start")) {
+        if(DTM.getConfig().getBoolean("game-description-message.enabled")) {
+            Messages.multipleLines(player, "game-description-message.message");
+        }
+
+        if(canStart()) {
             startCountdown();
         }
 
+    }
+
+    public static boolean canStart() {
+        return players.size() >= DTM.getConfig().getInt("games.min-players-to-start");
     }
 
     public static boolean hasJoined(Player player) {
@@ -48,7 +60,8 @@ public class Game implements Listener {
     public static void spectate(Player player) {
 
         if(!DTM.getConfig().getBoolean("spectating.enabled")) {
-            Messages.send(player, "feature-not-available");
+            //Add this to the /spec command
+            //Messages.send(player, "feature-not-available");
             return;
         }
 
@@ -63,9 +76,28 @@ public class Game implements Listener {
 
     public static void leave(Player player) {
 
+        if(countingDown) {
+
+        }
+
     }
 
     private static void startCountdown() {
+
+        Game.countingDown = true;
+
+        DTM.every(1, () -> {
+
+            int toStart = 20;
+            if(!canStart()) {
+                for(Player player : players) {
+                    Messages.sendOther(player, "game-countdown.countdown-stopped");
+                }
+
+            }
+
+
+        });
 
     }
 
@@ -86,5 +118,21 @@ public class Game implements Listener {
     public static void end(Team winner) {
 
     }
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent e) {
+
+        Player player = e.getPlayer();
+
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent e) {
+
+        Player player = e.getPlayer();
+
+    }
+
+
 
 }
