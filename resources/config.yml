@@ -130,10 +130,27 @@ game-description-message:
     - ''
     - '&7&m--------------------'
 
+# Different messages for game countdown
 game-countdown:
   start-message: '&e&lGame countdown started!'
   message: '&eGame starting in &a%seconds_left%&e...'
   countdown-stopped: '&aStopped game countdown!'
+
+# Different messages to events inside the game
+game-messages:
+  game-starting: '&e&lStarting game...'
+  game-paused: '&e&lGame paused! Waiting to resume...'
+  game-resumed: '&e&lGame continues!'
+
+# Message when game ends, announcing the winner team
+game-end-message:
+  - '&7&m--------------------'
+  - ' &a&lGame is Over!'
+  - ''
+  - ' &7Winner: %winner_team%&7!'
+  - ''
+  - ' &7Teleporting to lobby...'
+  - '&7&m--------------------'
 
 
 # --------------------------
@@ -155,7 +172,7 @@ game-countdown:
 #       CHAT SETTINGS
 # --------------------------
 
-# Settings for the prefix in-front of every sent message
+# Settings for the prefix in-front-of every sent message
 msg-prefix: "&a[DTM]"
 msg-prefix-enabled: true
 
